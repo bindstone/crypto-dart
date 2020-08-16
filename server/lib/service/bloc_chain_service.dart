@@ -5,10 +5,28 @@ import 'package:server/service/bloc_service.dart';
 class BocChainService {
   var blocService = BlocService();
 
+  int calculateAdjustment(BlocChain blocChain){
+    if(blocChain.length()<3) {
+      return 0;
+    }
+
+    var blocPrev = blocChain.chain()[blocChain.length()-1];
+    var blocPrev2 = blocChain.chain()[blocChain.length()-2];
+
+    if (blocPrev.timestamp.difference(blocPrev2.timestamp).inMinutes > SysVal.MINER_TIME_ADJ_LONG) {
+      return -1;
+    } else if(blocPrev.timestamp.difference(blocPrev2.timestamp).inMinutes < SysVal.MINER_TIME_ADJ_SHORT) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
   bool valid(BlocChain blocChain) {
     return validNotEmpty(blocChain) &&
            validGenesisBloc(blocChain) &&
            validChainOrder(blocChain) &&
+           validDifficulty(blocChain) &&
            validBlocs(blocChain) ;
   }
   
@@ -36,5 +54,22 @@ class BocChainService {
 
   bool validBlocs(BlocChain blocChain) {
     return blocChain.chain().sublist(1).fold(true, (p, e) => p && blocService.valid(e));
+  }
+
+  bool validToReplace(BlocChain curChain, BlocChain newChain) {
+    if(curChain.length() >= newChain.length()) {
+      return false;
+    }
+    return (valid(newChain));
+  }
+
+  bool validDifficulty(BlocChain blocChain) {
+    var isValid = true;
+    for (var i = 1; i<blocChain.length(); i++) {
+      var chain = BlocChain(chain: blocChain.chain().sublist(0, i));
+      var adj = calculateAdjustment(chain);
+      isValid = isValid && adj == blocChain.chain()[i -1].difficulty - blocChain.chain()[i -1].difficulty;
+    }
+    return isValid;
   }
 }

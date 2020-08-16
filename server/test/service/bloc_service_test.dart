@@ -8,7 +8,7 @@ void main() {
   
   test('Calculated Mine Bloc', () {
     var genesis = SysVal.GENESIS_BLOC;
-    var minedBloc = blocService.mineBlock(genesis, 'New Data');
+    var minedBloc = blocService.mineBlock(genesis, 0, 'New Data');
 
     expect(minedBloc.lastHash, genesis.hash);
     expect(minedBloc.data, 'New Data');
@@ -17,35 +17,32 @@ void main() {
   });
 
   group('Bloc Validation',() {
-    test('Valid Bloc', () {
-      var bloc = Bloc(lastHash: '1337', timestamp: DateTime.now(), data: 'Test');
+    var bloc;
+    setUp(() {
+      bloc = Bloc(lastHash: '1337', timestamp: DateTime.now(), data: 'Test');
       bloc.hash = blocService.calculateHash(bloc);
+    });
+
+    test('Valid Bloc', () {
       expect(blocService.valid(bloc), true);
     });
 
     test('Invalid Hash', () {
-      var bloc = Bloc(lastHash: '1337', timestamp: DateTime.now(), data: 'Test');
       bloc.hash = 'INVALID';
       expect(blocService.valid(bloc), false);
     });
 
     test('invalid previous Hash', () {
-      var bloc = Bloc(lastHash: '1337', timestamp: DateTime.now(), data: 'Test');
-      bloc.hash = blocService.calculateHash(bloc);
       bloc.lastHash = '1007';
       expect(blocService.valid(bloc), false);
     });
 
     test('invalid Timestamp', () {
-      var bloc = Bloc(lastHash: '1337', timestamp: DateTime.now(), data: 'Test');
-      bloc.hash = blocService.calculateHash(bloc);
       bloc.timestamp = DateTime.now().add(Duration(days: 1));
       expect(blocService.valid(bloc), false);
     });
 
     test('invalid Data', () {
-      var bloc = Bloc(lastHash: '1337', timestamp: DateTime.now(), data: 'Test');
-      bloc.hash = blocService.calculateHash(bloc);
       bloc.data = 'INVALID';
       expect(blocService.valid(bloc), false);
     });

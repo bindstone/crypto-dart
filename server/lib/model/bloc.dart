@@ -3,7 +3,9 @@ class Bloc {
   String lastHash;
   String hash;
   String data;
+  int nounce;
+  int difficulty;
 
-  Bloc({this.timestamp, this.lastHash, this.hash, this.data});
+  Bloc({this.timestamp, this.lastHash, this.hash, this.data, this.nounce, this.difficulty});
 
 }
