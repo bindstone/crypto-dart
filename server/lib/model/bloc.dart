@@ -6,6 +6,11 @@ class Bloc {
   int nounce;
   int difficulty;
 
-  Bloc({this.timestamp, this.lastHash, this.hash, this.data, this.nounce, this.difficulty});
-
+  Bloc(
+      {this.timestamp,
+      this.lastHash,
+      this.hash,
+      this.data,
+      this.nounce,
+      this.difficulty});
 }

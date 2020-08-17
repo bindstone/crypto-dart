@@ -1,9 +1,18 @@
 import 'package:server/config/sys_val.dart';
+import 'package:server/model/bloc.dart';
 import 'package:server/model/bloc_chain.dart';
 import 'package:server/service/bloc_service.dart';
 
 class BocChainService {
   var blocService = BlocService();
+
+  Bloc addData(BlocChain blocChain, String data) {
+
+    var bloc = blocService.mineBlock(blocChain.chain().last, calculateAdjustment(blocChain), data);
+    blocChain.addBloc(bloc);
+
+    return bloc;
+  }
 
   int calculateAdjustment(BlocChain blocChain){
     if(blocChain.length()<3) {

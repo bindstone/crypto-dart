@@ -21,7 +21,7 @@ class BlocService {
   }
 
   String calculateHash(Bloc bloc) {
-    var check = '${bloc.lastHash} ${bloc.timestamp} ${bloc.data} ${bloc.difficulty} ${bloc.nounce}';
+    var check = '${bloc.data}${bloc.difficulty}${bloc.lastHash}${bloc.nounce}${bloc.timestamp}';
     return sha256.convert(check.codeUnits).toString();
   }
 
@@ -30,7 +30,9 @@ class BlocService {
   }
 
   bool validGoldenHash(Bloc bloc) {
-    var bin = bloc.hash.codeUnits.map((int strInt) => strInt.toRadixString(2)).join('');
-    return bin.endsWith(List.filled(bloc.difficulty, '0').join(''));
+    //  hash.split('').map((x) => int.parse(x, radix: 16).toRadixString(2).padLeft(8, '0')).join('');
+    //  hash.codeUnits.map((x) => x.toRadixString(2).padLeft(8, '0')).join()
+    var bin = bloc.hash.split('').map((x) => int.parse(x, radix: 16).toRadixString(2).padLeft(8, '0')).join('');
+    return bin.startsWith(List.filled(bloc.difficulty, '0').join(''));
   }
 }
