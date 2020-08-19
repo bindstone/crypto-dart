@@ -1,8 +1,14 @@
 import 'package:server/config/sys_val.dart';
 import 'package:server/model/bloc.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'bloc_chain.g.dart';
+
+@JsonSerializable()
 class BlocChain {
-  var _chain;
+
+  @JsonKey(name: 'chain')
+  List _chain;
 
   BlocChain({List chain}) {
     if(chain == null) {
@@ -28,5 +34,9 @@ class BlocChain {
   void replaceChain(List<Bloc> newChain) {
     _chain = newChain;
   }
+
+  // From generated file
+  factory BlocChain.fromJson(Map<String, dynamic> json) => _$BlocChainFromJson(json);
+  Map<String, dynamic> toJson() => _$BlocChainToJson(this);
 
 }

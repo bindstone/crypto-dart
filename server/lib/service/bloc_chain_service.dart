@@ -1,17 +1,38 @@
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:server/config/sys_val.dart';
 import 'package:server/model/bloc.dart';
 import 'package:server/model/bloc_chain.dart';
 import 'package:server/service/bloc_service.dart';
 
 class BocChainService {
-  var blocService = BlocService();
+  final MASTER = 'MASTER';
+  final _blocService = BlocService();
+  final Db _mongo;
+
+  BocChainService(this._mongo);
+
+  Future<BlocChain> getBlocChain() async {
+
+    var col = _mongo.collection(MASTER);
+    var result = await col.findOne({'type':'blocchain'});
+
+    if (result == null) {
+      result = {};
+      var bloc = BlocChain();
+      result.putIfAbsent('blocchain', () => bloc.toJson());
+      await col.save(result);
+      return bloc;
+    }
+    var value = await result['blocchain'];
+    return value;
+  }
 
   Bloc addData(BlocChain blocChain, String data) {
 
-    var bloc = blocService.mineBlock(blocChain.chain().last, calculateAdjustment(blocChain), data);
+    var bloc = _blocService.mineBlock(blocChain.chain().last, calculateAdjustment(blocChain), data);
     blocChain.addBloc(bloc);
-
     return bloc;
+
   }
 
   int calculateAdjustment(BlocChain blocChain){
@@ -62,7 +83,7 @@ class BocChainService {
   }
 
   bool validBlocs(BlocChain blocChain) {
-    return blocChain.chain().sublist(1).fold(true, (p, e) => p && blocService.valid(e));
+    return blocChain.chain().sublist(1).fold(true, (p, e) => p && _blocService.valid(e));
   }
 
   bool validToReplace(BlocChain curChain, BlocChain newChain) {

@@ -8,6 +8,17 @@ class BlocHandler {
   BlocHandler(this._mongo);
 
   Response handleRoute(Request request) {
+    var path = request.url.path.substring('api/bloc'.length);
+    if (request.method == 'GET') {
+      var params = path.split('/');
+      if (params.length == 1 || params[1].isEmpty) {
+
+      } else {
+
+      }
+    }
     return Response.ok('Bloc handled');
   }
+
+
 }

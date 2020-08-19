@@ -5,12 +5,12 @@ import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 
 void main(List<String> arguments) async {
-
   var configFile = arguments.isNotEmpty ? arguments.first : './bin/config.yaml';
 
   var config = ApplicationConfiguration(configFile);
 
-  var mongo =  Db('mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}');
+  var mongo = Db(
+      'mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}');
 
   await mongo.open();
 
