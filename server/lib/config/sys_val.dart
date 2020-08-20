@@ -11,4 +11,5 @@ static final GENESIS_BLOC = Bloc(
     difficulty: 3,
     timestamp: DateTime(2000, 1, 1, 13, 37, 0, 0, 0),
     data: '');
+
 }

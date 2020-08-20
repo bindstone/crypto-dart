@@ -36,7 +36,18 @@ class BlocChain {
   }
 
   // From generated file
-  factory BlocChain.fromJson(Map<String, dynamic> json) => _$BlocChainFromJson(json);
-  Map<String, dynamic> toJson() => _$BlocChainToJson(this);
+  factory BlocChain.fromJson(Map<String, dynamic> json) {
+    var blocChain = _$BlocChainFromJson(json);
+    var blocs = [];
+    (json['chain'] as List).forEach((element) {
+      blocs.add(Bloc.fromJson(element));
+    });
+    return blocChain;
+  }
 
+  Map<String, dynamic> toJson() {
+    var chain = _$BlocChainToJson(this);
+    chain.putIfAbsent('chain', () => _chain.map((e) => e.toJson()).toList());
+    return chain;
+  }
 }

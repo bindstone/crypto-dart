@@ -3,7 +3,7 @@ import 'package:server/service/bloc_chain_service.dart';
 import 'package:test/test.dart';
 
 void main() {
-  var blocChainService = BocChainService();
+  var blocChainService = BocChainService(null);
 
   test('valid Genesis', () {
     var chain = BlocChain();

@@ -1,51 +1,57 @@
+import 'dart:io';
+
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:server/config/mongo_config.dart';
 import 'package:server/config/sys_val.dart';
 import 'package:server/model/bloc.dart';
 import 'package:server/model/bloc_chain.dart';
 import 'package:server/service/bloc_service.dart';
 
 class BocChainService {
-  final MASTER = 'MASTER';
+
   final _blocService = BlocService();
   final Db _mongo;
 
   BocChainService(this._mongo);
 
   Future<BlocChain> getBlocChain() async {
-
-    var col = _mongo.collection(MASTER);
-    var result = await col.findOne({'type':'blocchain'});
-
-    if (result == null) {
-      result = {};
-      var bloc = BlocChain();
-      result.putIfAbsent('blocchain', () => bloc.toJson());
-      await col.save(result);
-      return bloc;
+    var col = _mongo.collection(COLLECTION_BLOC_CHAIN);
+    var result = await col.findOne();
+    if(result == null || result.isEmpty) {
+      var blocChain = BlocChain();
+      save(blocChain);
+      return blocChain;
+    } else {
+      return BlocChain.fromJson(result);
     }
-    var value = await result['blocchain'];
-    return value;
+  }
+
+  void save(BlocChain blocChain) async {
+    await _mongo.collection(COLLECTION_BLOC_CHAIN).save(
+      blocChain.toJson()
+    );
   }
 
   Bloc addData(BlocChain blocChain, String data) {
-
-    var bloc = _blocService.mineBlock(blocChain.chain().last, calculateAdjustment(blocChain), data);
+    var bloc = _blocService.mineBlock(
+        blocChain.chain().last, calculateAdjustment(blocChain), data);
     blocChain.addBloc(bloc);
     return bloc;
-
   }
 
-  int calculateAdjustment(BlocChain blocChain){
-    if(blocChain.length()<3) {
+  int calculateAdjustment(BlocChain blocChain) {
+    if (blocChain.length() < 3) {
       return 0;
     }
 
-    var blocPrev = blocChain.chain()[blocChain.length()-1];
-    var blocPrev2 = blocChain.chain()[blocChain.length()-2];
+    var blocPrev = blocChain.chain()[blocChain.length() - 1];
+    var blocPrev2 = blocChain.chain()[blocChain.length() - 2];
 
-    if (blocPrev.timestamp.difference(blocPrev2.timestamp).inMinutes > SysVal.MINER_TIME_ADJ_LONG) {
+    if (blocPrev.timestamp.difference(blocPrev2.timestamp).inMinutes >
+        SysVal.MINER_TIME_ADJ_LONG) {
       return -1;
-    } else if(blocPrev.timestamp.difference(blocPrev2.timestamp).inMinutes < SysVal.MINER_TIME_ADJ_SHORT) {
+    } else if (blocPrev.timestamp.difference(blocPrev2.timestamp).inMinutes <
+        SysVal.MINER_TIME_ADJ_SHORT) {
       return 1;
     } else {
       return 0;
@@ -54,21 +60,21 @@ class BocChainService {
 
   bool valid(BlocChain blocChain) {
     return validNotEmpty(blocChain) &&
-           validGenesisBloc(blocChain) &&
-           validChainOrder(blocChain) &&
-           validDifficulty(blocChain) &&
-           validBlocs(blocChain) ;
+        validGenesisBloc(blocChain) &&
+        validChainOrder(blocChain) &&
+        validDifficulty(blocChain) &&
+        validBlocs(blocChain);
   }
-  
+
   bool validNotEmpty(BlocChain blocChain) {
     return blocChain != null && blocChain.chain().isNotEmpty;
   }
-  
+
   bool validGenesisBloc(BlocChain blocChain) {
     if (blocChain.chain()[0] != SysVal.GENESIS_BLOC) {
       return false;
     }
-    return true;    
+    return true;
   }
 
   bool validChainOrder(BlocChain blocChain) {
@@ -83,11 +89,14 @@ class BocChainService {
   }
 
   bool validBlocs(BlocChain blocChain) {
-    return blocChain.chain().sublist(1).fold(true, (p, e) => p && _blocService.valid(e));
+    return blocChain
+        .chain()
+        .sublist(1)
+        .fold(true, (p, e) => p && _blocService.valid(e));
   }
 
   bool validToReplace(BlocChain curChain, BlocChain newChain) {
-    if(curChain.length() >= newChain.length()) {
+    if (curChain.length() >= newChain.length()) {
       return false;
     }
     return (valid(newChain));
@@ -95,10 +104,13 @@ class BocChainService {
 
   bool validDifficulty(BlocChain blocChain) {
     var isValid = true;
-    for (var i = 1; i<blocChain.length(); i++) {
+    for (var i = 1; i < blocChain.length(); i++) {
       var chain = BlocChain(chain: blocChain.chain().sublist(0, i));
       var adj = calculateAdjustment(chain);
-      isValid = isValid && adj == blocChain.chain()[i -1].difficulty - blocChain.chain()[i -1].difficulty;
+      isValid = isValid &&
+          adj ==
+              blocChain.chain()[i - 1].difficulty -
+                  blocChain.chain()[i - 1].difficulty;
     }
     return isValid;
   }

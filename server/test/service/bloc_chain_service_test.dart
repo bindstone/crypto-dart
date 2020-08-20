@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   var genesis = SysVal.GENESIS_BLOC;
-  var blocChainService = BocChainService();
+  var blocChainService = BocChainService(null);
   var blocService = BlocService();
 
   group('New Chain', () {
