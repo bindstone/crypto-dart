@@ -1,27 +1,34 @@
-import 'package:mongo_dart/mongo_dart.dart';
-import 'package:server/web_handler/bloc_chain_handler.dart';
-import 'package:server/web_handler/bloc_handler.dart';
-import 'package:shelf/shelf.dart';
+import 'dart:io';
 
-const REST_HEADER = {
-  'Access-Control-Allow-Origin': '*',
-  'Content-Type': 'application/json'
-};
+import 'package:http_server/http_server.dart';
+import 'package:mongo_dart/mongo_dart.dart';
+import 'package:server/controller/bloc_chain_controller.dart';
+import 'package:server/controller/bloc_controller.dart';
+
+void addRestHeaders(HttpHeaders headers) {
+  headers.add('Access-Control-Allow-Origin', '*');
+  headers.add('Content-Type', 'application/json');
+}
 
 class HandlerConfig {
-  var handler;
 
-  HandlerConfig(Db mongo) {
-    var blocHandler = BlocHandler(mongo);
-    var blocChainHandler = BlocChainHandler(mongo);
-    handler = Cascade().add((request) {
-      if (request.url.path.startsWith('api/bloc-chain')) {
-        return blocChainHandler.handleRoute(request);
-      }
-      if (request.url.path.startsWith('api/bloc')) {
-        return blocHandler.handleRoute(request);
-      }
-      return Response.notFound('No route handler for: ' + request.url.path);
-    }).handler;
+  Db _mongo;
+
+  HandlerConfig(this._mongo);
+
+  Future<void> handleRoute(HttpRequestBody _rqBody) async {
+    var path = _rqBody.request.uri.path;
+    print('Request for [${path}]');
+    //
+    if (path.startsWith('/api/bloc-chain')) {
+      BlocChainController(_mongo).handleRoute(_rqBody);
+    //
+    } else if (path.startsWith('/api/bloc')) {
+      BlocController(_mongo).handleRoute(_rqBody);
+    //
+    } else {
+      _rqBody.request.response.statusCode = 405;
+      await _rqBody.request.response.close();
+    }
   }
 }

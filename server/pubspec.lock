@@ -218,6 +218,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
+  http_server:
+    dependency: "direct main"
+    description:
+      name: http_server
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.8+3"
   io:
     dependency: transitive
     description:
@@ -387,7 +394,7 @@ packages:
     source: hosted
     version: "3.0.0-b2"
   shelf:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shelf
       url: "https://pub.dartlang.org"

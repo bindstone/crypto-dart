@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 void main() {
   var genesis = SysVal.GENESIS_BLOC;
   var blocChainService = BocChainService(null);
-  var blocService = BlocService();
+  var blocService = BlocService(null);
 
   group('New Chain', () {
     test('valid Genesis', () {

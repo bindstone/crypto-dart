@@ -10,7 +10,7 @@ environment:
 dependencies:
   build_runner: ^1.0.0
   crypto: ^2.1.5
-  shelf: ^0.7.9
+  http_server: ^0.9.8+3
   mongo_dart: 0.4.0
   safe_config: ^3.0.0-b2
   json_serializable: ^3.4.0

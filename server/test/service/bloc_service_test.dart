@@ -4,7 +4,7 @@ import 'package:server/service/bloc_service.dart';
 import 'package:test/test.dart';
 
 void main() {
-  var blocService = BlocService();
+  var blocService = BlocService(null);
   
   test('Calculated Mine Bloc', () {
     var genesis = SysVal.GENESIS_BLOC;

@@ -9,10 +9,12 @@ import 'package:server/service/bloc_service.dart';
 
 class BocChainService {
 
-  final _blocService = BlocService();
   final Db _mongo;
+  BlocService _blocService;
 
-  BocChainService(this._mongo);
+  BocChainService(this._mongo) {
+    _blocService = BlocService(_mongo);
+  }
 
   Future<BlocChain> getBlocChain() async {
     var col = _mongo.collection(COLLECTION_BLOC_CHAIN);

@@ -1,7 +1,12 @@
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:server/model/bloc.dart';
 import 'package:crypto/crypto.dart';
 
 class BlocService {
+
+  final Db _mongo;
+
+  BlocService(this._mongo);
 
   Bloc mineBlock(Bloc previous, int adjusting, String data) {
     var bloc =  Bloc();
