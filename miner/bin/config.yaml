@@ -2,11 +2,6 @@ server:
   host: "localhost"
   port: 8080
 
-mongo:
-  host: "localhost"
-  port: 27017
-  db: "master"
-
 rabbit:
   host: "localhost"
   port: 1111

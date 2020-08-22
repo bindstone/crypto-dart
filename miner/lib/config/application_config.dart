@@ -11,7 +11,6 @@ class ApplicationConfiguration extends Configuration {
         super.fromFile(File(fileName));
 
   ServerConfig server;
-  MongoConfig mongo;
   RabbitConfig rabbit;
 
 }

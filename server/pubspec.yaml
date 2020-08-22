@@ -14,6 +14,7 @@ dependencies:
   mongo_dart: 0.4.0
   safe_config: ^3.0.0-b2
   json_serializable: ^3.4.0
+  dart_amqp: ^0.1.4
 
 dev_dependencies:
   pedantic: ^1.9.0
