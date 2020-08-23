@@ -1,7 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dart_amqp/dart_amqp.dart';
 
 void main(List<String> arguments) async {
 
+  var client = HttpClient();
+
+  await client
+      .getUrl(Uri.parse('http://localhost:8080/api/bloc-chain/'))
+      .then((request) => request.close()) // sends the request
+      .then((response) => response.transform(Utf8Decoder()).listen(print));
+
+  /**
   var client = Client();
 
   var result = client
@@ -23,4 +34,5 @@ void main(List<String> arguments) async {
     message.reply('world');
   }));
   print('End.');
+   **/
 }
